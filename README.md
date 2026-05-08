@@ -112,23 +112,23 @@
 
  - Các bước cài đặt và chạy chương trình
 
- - Bước 1. Giải nén dự án
+Bước 1. Giải nén dự án
 
  - Giải nén mã nguồn vào một thư mục trên máy tính.
 
- - Bước 2. Cài đặt môi trường
+Bước 2. Cài đặt môi trường
 
  - Cài đặt Python (phiên bản ≥ 3.9).
 
  - Tạo môi trường ảo (khuyến khích): python -m venv venv.
 
- - Bước 3. Cài đặt thư viện
+Bước 3. Cài đặt thư viện
 
  - Chạy lệnh cài đặt các thư viện cần thiết:
 
         pip install -r requirements.txt
 
- - Bước 4. Cấu hình biến môi trường
+Bước 4. Cấu hình biến môi trường
 
  - Tạo file .env từ file .env.example.
 
@@ -140,7 +140,7 @@
         
         ALERT_TO_EMAIL=recipient_email@gmail.com
 
- - Bước 5. Chạy chương trình
+Bước 5. Chạy chương trình
 
  - Chạy với Webcam:
 
@@ -150,7 +150,7 @@
 
         python fall_live.py --video video_test.mp4
 
- - Bước 6. Kiểm tra hoạt động
+Bước 6. Kiểm tra hoạt động
 
  - Khi có người té ngã, màn hình sẽ hiển thị dòng chữ "FALL DETECTED" màu đỏ.
 
