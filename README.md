@@ -26,13 +26,13 @@
 
 ## 1. Mục tiêu của hệ thống
 
-- Tối ưu hóa trải nghiệm tìm kiếm phòng trọ bằng AI và bản đồ tương tác.
+- Phát hiện té ngã thời gian thực: Sử dụng camera giám sát hoặc dữ liệu video để nhận diện hành vi té ngã của con người một cách tự động.
 
-- Kết nối người thuê và người cho thuê trong cùng nền tảng, đảm bảo minh bạch, tiện lợi.
+- Phân tích tư thế chính xác: Kết hợp kỹ thuật Pose Estimation (MediaPipe) và HOG Descriptor để trích xuất khung xương, phân tích góc nghiêng thân người và tỉ lệ khung hình.
 
-- Tự động gợi ý phòng trọ phù hợp với nhu cầu và vị trí người dùng nhờ hệ thống AI thông minh.
+- Cảnh báo tức thời: Tự động gửi thông báo qua Email kèm hình ảnh và video ghi lại khoảnh khắc té ngã để người thân/nhân viên y tế kịp thời ứng phó.
 
-- Tích hợp chatbot tư vấn, so sánh phòng trọ, và tìm người ở ghép để mở rộng trải nghiệm.
+- Giảm thiểu báo động giả: Sử dụng các thuật toán lọc chuyển động (Motion Filtering) và kiểm tra sự thay đổi đột ngột của trọng tâm (Drop threshold).
 
 ⚙️ Thành phần hệ thống
 
