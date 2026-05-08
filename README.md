@@ -36,81 +36,63 @@
 
 ⚙️ Thành phần hệ thống
 
-🔹 1. Người thuê (Client)
+🔹 1. Modul sử lí hình ảnh
 
-- Tìm kiếm phòng trọ theo vị trí, giá, tiện nghi, bản đồ tương tác.
+- Pose Estimator: Sử dụng MediaPipe để nhận diện 17 điểm chốt trên cơ thể, tính toán góc nghiêng của thân (torso angle).
 
-- Xem chi tiết, so sánh, đánh giá và lưu phòng yêu thích.
+- HOG Detector: Nhận diện người trong khung hình làm phương án dự phòng khi Pose Estimator bị che khuất.
 
-- Giao tiếp trực tiếp với chủ trọ qua tính năng nhắn tin.
+- Motion Tracker: Phân tích sự thay đổi vị trí theo trục dọc (Y) để xác định vận tốc rơi.
 
-- Sử dụng AI chatbot để được gợi ý phòng trọ phù hợp.
+🔹 2. Modul cảnh báo & Lưu trữ
 
-- Có thể đăng yêu cầu tìm người ở ghép hoặc xem các bài đăng tương tự.
+- Email Alert: Tích hợp giao thức SMTP để gửi mail tự động qua Gmail (hỗ trợ đính kèm ảnh và clip mp4).
 
-🔹 2. Người cho thuê (Host)
-
-- Đăng bài cho thuê phòng, quản lý thông tin, cập nhật, xóa bài đăng.
-
-- Quản lý danh sách phòng, xem tin nhắn từ người thuê.
-
-- Cập nhật trạng thái phòng (đã thuê/chưa thuê).
-
-- Quản lý hồ sơ cá nhân và bảo mật tài khoản.
+- Local Logger: Lưu trữ video clip các vụ té ngã vào thư mục outputs/falls để làm bằng chứng đối chiếu.
 
 💡 Điểm nổi bật
 
-- 💬 AI Chatbot hỗ trợ người thuê tìm nhà nhanh chóng.
+- 💬 Cảnh báo đa phương thức: Gửi email ảnh ngay lập tức và video clip ngay sau khi sự cố kết thúc.
 
-- 🗺️ Tích hợp bản đồ OpenStreetMap & Nominatim API cho phép xem vị trí phòng thực tế.
+- 🏃 Xử lý luồng tối ưu: Hỗ trợ đa luồng (threading) cho việc gửi email, không gây giật lag luồng xử lý ảnh chính.
 
-- 🔒 Bảo mật tài khoản với JWT Authentication.
+- 🔒 Bảo mật: Quản lý thông tin nhạy cảm (Email, Password) qua biến môi trường .env.
 
-- 📊 Hệ thống gợi ý thông minh dựa trên dữ liệu hành vi và từ khóa tìm kiếm.
-
-- 💻 Giao diện thân thiện, hiện đại xây dựng bằng React + Bootstrap.
-
-- ⚙️ Hệ thống Backend mạnh mẽ với Node.js + Express + MySQL.
+- 💻 Tương thích cao: Hoạt động tốt trên cả Webcam trực tiếp và các file video định dạng phổ biến (mp4, avi).
 
 ## ⚙️ 2. Công nghệ và công cụ sử dụng
 
-    Frontend (React + Vite)
+    Input (Camera / Video File)
        ↓
-    Backend (Node.js + Express)
+    Processing (OpenCV + MediaPipe + HOG)
        ↓
-    Database (MySQL / MariaDB)
+    Alert (SMTP Service + Threading)
 
-🖥️ Frontend
+🖥️ Công nghệ xử lý chính
 
-- React 18, Vite, Bootstrap, Axios
+ - Python 3.x: Ngôn ngữ lập trình chính.
 
-- Tích hợp Leaflet + OpenStreetMap để hiển thị vị trí phòng
+ - OpenCV: Xử lý khung hình, vẽ bounding box và ghi video.
 
-- Giao diện hiện đại, hỗ trợ AI Chatbot và tìm kiếm nâng cao
+ - MediaPipe: Trích xuất tọa độ các điểm chốt cơ thể (landmarks).
 
-💻 Backend
+ - NumPy: Tính toán đại số tuyến tính và góc hình học.
 
-- Node.js + Express.js, MySQL
+💻 Dịch vụ và giao thức
 
-- JWT Authentication đảm bảo bảo mật
+ - SMTP (Gmail): Gửi thông báo khẩn cấp.
 
-- Tích hợp Google Gemini API và Nominatim API (Geocoding)
+ - Python-dotenv: Quản lý cấu hình hệ thống.
 
-- Quản lý người dùng, phòng trọ, tin nhắn, gợi ý AI
+ - Argparse: Cung cấp giao diện dòng lệnh linh hoạt.
 
 🛠️ Công cụ phát triển
 
-- IDE: Visual Studio Code
+ - IDE: Visual Studio Code / PyCharm.
 
-- Node.js: v14+
+ - Thư viện yêu cầu: opencv-python, mediapipe, python-dotenv, numpy.
 
-- CSDL: MySQL 5.7+ hoặc MariaDB
-
-- API Key: Google Gemini
-
-- Hệ điều hành: Windows / Linux / macOS
-
-
+ - Hệ điều hành: Windows / Linux / macOS.
 ---
 
 ## 🧩 3. Hình ảnh các chức năng
@@ -123,122 +105,56 @@
   <em>Hình 1: Giao diện chính của hệ thống  </em>
 </p>
 
-<p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_form_dang_ky.png" alt="Ảnh 2" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 2: Giao diện form đăng ký  </em>
-</p>
-
-<p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_form_dang_nhap.png" alt="Ảnh 3" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 3: Giao diện form đăng nhập  </em>
-</p>
-
-<p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_quan_ly_phong_tro.png" alt="Ảnh 4" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 4: Giao diện quản lý phòng trọ  </em>
-</p>
-
-<p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/so_sanh_phong_tro.png" alt="Ảnh 5" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 5: So sánh phòng trọ  </em>
-</p>
-
-<p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/them_tt_phong_tro.png" alt="Ảnh 6" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 6: Thêm thông tin phòng trọ  </em>
-</p>
-
-<p align="center">
-  <img src="https://github.com/tiennq004/LTM_he_thong_canh_bao_thoi_gian_thuc/blob/main/docs/giao_dien_server.png" alt="Ảnh 7" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 7: Nhắn tin trao đổi thông tin giữa người thuê và người cho thuê  </em>
-</p>
-
-<p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/xem_tro_tren_ggmap.png" alt="Ảnh 8" width="800"/>
-</p> 
-<p align="center">
-  <em>Hình 8: Xem địa chỉ trọ trên Google Map  </em>
-</p>
-
 
 ---
 
 ## ⚙️ 4. Các bước cài đặt
 
-1. Các bước cài đặt và chạy chương trình
+ - Các bước cài đặt và chạy chương trình
 
-- Bước 1. Giải nén dự án
+ - Bước 1. Giải nén dự án
 
-    - Giải nén file BTL.zip vào một thư mục bất kỳ.
+ - Giải nén mã nguồn vào một thư mục trên máy tính.
 
-- Bước 2. Cài đặt môi trường
+ - Bước 2. Cài đặt môi trường
 
-    - Cài Node.js (phiên bản ≥ 18).
+ - Cài đặt Python (phiên bản ≥ 3.9).
 
-    - Cài MongoDB (nếu dự án sử dụng cơ sở dữ liệu này).
+ - Tạo môi trường ảo (khuyến khích): python -m venv venv.
 
-- Bước 3. Cài đặt thư viện
+ - Bước 3. Cài đặt thư viện
 
-    - Mở Terminal hoặc CMD tại thư mục gốc của dự án và chạy lệnh:
+ - Chạy lệnh cài đặt các thư viện cần thiết:
 
-            npm install
+        pip install -r requirements.txt
 
-    - Sau đó di chuyển vào thư mục client để cài thư viện cho giao diện:
+ - Bước 4. Cấu hình biến môi trường
 
-            cd client
-    
-            npm install
+ - Tạo file .env từ file .env.example.
 
+ - Điền thông tin Gmail App Password để hệ thống có quyền gửi mail:
 
-- Bước 4. Cấu hình biến môi trường
+        SMTP_USER=your_email@gmail.com
+        
+        SMTP_APP_PASSWORD=your_app_password
+        
+        ALERT_TO_EMAIL=recipient_email@gmail.com
 
-    - Tạo file .env trong thư mục chính (nếu chưa có).
+ - Bước 5. Chạy chương trình
 
-    - Điền các thông tin kết nối, ví dụ:
+ - Chạy với Webcam:
 
-            PORT=5000
+        python fall_live.py --camera 0
+ 
+ - Chạy với tệp video có sẵn:
 
-            MONGO_URI=mongodb://localhost:27017/tenCSDL
+        python fall_live.py --video video_test.mp4
 
-            JWT_SECRET=secret_key
+ - Bước 6. Kiểm tra hoạt động
 
-- Bước 5. Chạy chương trình
+ - Khi có người té ngã, màn hình sẽ hiển thị dòng chữ "FALL DETECTED" màu đỏ.
 
-    - Mở hai cửa sổ terminal:
-    
-    - Cửa sổ 1 (backend):
-
-            npm start
-
-    - Cửa sổ 2 (frontend):
-
-            cd client
-
-            npm run dev
-
-    - Sau khi khởi chạy, mở trình duyệt và truy cập địa chỉ:
-
-            👉 http://localhost:5173
-      
-             (hoặc cổng hiển thị trong terminal).
-
-- Bước 6. Kiểm tra hoạt động
-
-    - Đăng ký / Đăng nhập người dùng.
-
-    - Kiểm tra các chức năng chính: thêm, sửa, xóa, tìm kiếm, upload...
+ - Kiểm tra hộp thư đến của Email để nhận cảnh báo.
 
 ## 👥 5. Nhóm thực hiện
 
