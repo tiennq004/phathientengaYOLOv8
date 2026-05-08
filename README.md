@@ -5,7 +5,7 @@
 </h2>
 
 <h2 align="center">  
-   ỨNG DỤNG CHUYỂN ĐỔI SỐ TRONG TÌM KIẾM NHÀ TRỌ
+   XÂY DỰNG HỆ THỐNG PHÁT HIỆN TÉ NGÃ CỦA CON NGƯỜI TỪ DỮ LIỆU VIDEO DỰ TRÊN KỸ THUẬT THỊ GIÁC MÁY TÍNH VÀ PHÂN TÍCH TƯ THẾ CƠ THỂ
 </h2>
 
 <div align="center">
