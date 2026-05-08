@@ -1,62 +1,255 @@
-# Phat hien te nga + gui canh bao Gmail
+<h2 align="center">
+    <a href="https://dainam.edu.vn/vi/khoa-cong-nghe-thong-tin">
+    🎓 Faculty of Information Technology (DaiNam University)
+    </a>
+</h2>
 
-Du an nay nhan dien nguoi bi nga tu webcam/video, sau do:
-- Luu anh tai thoi diem nghi nga.
-- Tao clip ngan quanh su co.
-- Gui email Gmail kem anh + video.
+<h2 align="center">  
+   ỨNG DỤNG CHUYỂN ĐỔI SỐ TRONG TÌM KIẾM NHÀ TRỌ
+</h2>
 
-## 1) Cai dat
+<div align="center">
+    <p align="center">
+        <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/aiotlab_logo.png" alt="AIoTLab Logo" width="170"/>
+        <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/fitdnu_logo.png" alt="FIT DNU Logo" width="180"/>
+        <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/dnu_logo.png" alt="DaiNam University Logo" width="200"/>
+    </p>
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
+[![AIoTLab](https://img.shields.io/badge/AIoTLab-green?style=for-the-badge)](https://www.facebook.com/DNUAIoTLab)
+[![Faculty of Information Technology](https://img.shields.io/badge/Faculty%20of%20Information%20Technology-blue?style=for-the-badge)](https://dainam.edu.vn/vi/khoa-cong-nghe-thong-tin)
+[![DaiNam University](https://img.shields.io/badge/DaiNam%20University-orange?style=for-the-badge)](https://dainam.edu.vn)
+</div>
 
-## 2) Cau hinh Gmail
+---
 
-1. Bat xac minh 2 buoc cho tai khoan Google.
-2. Tao **App Password** (16 ky tu) trong phan Bao mat.
-3. Tao file `.env` (co the copy tu `.env.example`) va dien:
 
-```env
-SMTP_USER=your_gmail@gmail.com
-SMTP_APP_PASSWORD=abcdefghijklmnop
-ALERT_TO_EMAIL=nguoi_nhan@gmail.com
-```
 
-## 3) Chay phat hien te nga
+## 1. Mục tiêu của hệ thống
 
-### Chay voi webcam
+- Tối ưu hóa trải nghiệm tìm kiếm phòng trọ bằng AI và bản đồ tương tác.
 
-```bash
-python fall_live.py --camera 0 --detect-every-n-frames 3 --after-sec 3
-```
+- Kết nối người thuê và người cho thuê trong cùng nền tảng, đảm bảo minh bạch, tiện lợi.
 
-### Chay voi video file
+- Tự động gợi ý phòng trọ phù hợp với nhu cầu và vị trí người dùng nhờ hệ thống AI thông minh.
 
-```bash
-python fall_live.py --video "video_2.mp4" --playback-speed 1.0 --after-sec 3
-```
+- Tích hợp chatbot tư vấn, so sánh phòng trọ, và tìm người ở ghép để mở rộng trải nghiệm.
 
-Khi phat hien te nga, chuong trinh se:
-- Luu file trong `outputs/falls`
-- Gui 1 email kem **anh + video ngan**
+⚙️ Thành phần hệ thống
 
-## 4) Test gui email truoc khi chay that
+🔹 1. Người thuê (Client)
 
-```bash
-python fall_live.py --test-email
-```
+- Tìm kiếm phòng trọ theo vị trí, giá, tiện nghi, bản đồ tương tác.
 
-Neu thanh cong, man hinh in ra: `Da gui email test toi ...`
+- Xem chi tiết, so sánh, đánh giá và lưu phòng yêu thích.
 
-## 5) Tham so quan trong
+- Giao tiếp trực tiếp với chủ trọ qua tính năng nhắn tin.
 
-- `--fall-aspect-threshold`: nguong ti le ngang/doc de xac dinh tu the nga.
-- `--horizontal-only-threshold`: nguong tu the nam ro rang.
-- `--cooldown-sec`: khoang nghi giua hai canh bao de tranh spam.
-- `--after-sec`: do dai clip sau su co.
-- `--send-immediate-image`: gui them 1 email anh ngay khi vua xac nhan nga.
+- Sử dụng AI chatbot để được gợi ý phòng trọ phù hợp.
 
-Nhan `q` de thoat.
+- Có thể đăng yêu cầu tìm người ở ghép hoặc xem các bài đăng tương tự.
+
+🔹 2. Người cho thuê (Host)
+
+- Đăng bài cho thuê phòng, quản lý thông tin, cập nhật, xóa bài đăng.
+
+- Quản lý danh sách phòng, xem tin nhắn từ người thuê.
+
+- Cập nhật trạng thái phòng (đã thuê/chưa thuê).
+
+- Quản lý hồ sơ cá nhân và bảo mật tài khoản.
+
+💡 Điểm nổi bật
+
+- 💬 AI Chatbot hỗ trợ người thuê tìm nhà nhanh chóng.
+
+- 🗺️ Tích hợp bản đồ OpenStreetMap & Nominatim API cho phép xem vị trí phòng thực tế.
+
+- 🔒 Bảo mật tài khoản với JWT Authentication.
+
+- 📊 Hệ thống gợi ý thông minh dựa trên dữ liệu hành vi và từ khóa tìm kiếm.
+
+- 💻 Giao diện thân thiện, hiện đại xây dựng bằng React + Bootstrap.
+
+- ⚙️ Hệ thống Backend mạnh mẽ với Node.js + Express + MySQL.
+
+## ⚙️ 2. Công nghệ và công cụ sử dụng
+
+    Frontend (React + Vite)
+       ↓
+    Backend (Node.js + Express)
+       ↓
+    Database (MySQL / MariaDB)
+
+🖥️ Frontend
+
+- React 18, Vite, Bootstrap, Axios
+
+- Tích hợp Leaflet + OpenStreetMap để hiển thị vị trí phòng
+
+- Giao diện hiện đại, hỗ trợ AI Chatbot và tìm kiếm nâng cao
+
+💻 Backend
+
+- Node.js + Express.js, MySQL
+
+- JWT Authentication đảm bảo bảo mật
+
+- Tích hợp Google Gemini API và Nominatim API (Geocoding)
+
+- Quản lý người dùng, phòng trọ, tin nhắn, gợi ý AI
+
+🛠️ Công cụ phát triển
+
+- IDE: Visual Studio Code
+
+- Node.js: v14+
+
+- CSDL: MySQL 5.7+ hoặc MariaDB
+
+- API Key: Google Gemini
+
+- Hệ điều hành: Windows / Linux / macOS
+
+
+---
+
+## 🧩 3. Hình ảnh các chức năng
+
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_chinh.png" alt="Ảnh 1" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 1: Giao diện chính của hệ thống  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_form_dang_ky.png" alt="Ảnh 2" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 2: Giao diện form đăng ký  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_form_dang_nhap.png" alt="Ảnh 3" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 3: Giao diện form đăng nhập  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_quan_ly_phong_tro.png" alt="Ảnh 4" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 4: Giao diện quản lý phòng trọ  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/so_sanh_phong_tro.png" alt="Ảnh 5" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 5: So sánh phòng trọ  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/them_tt_phong_tro.png" alt="Ảnh 6" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 6: Thêm thông tin phòng trọ  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/LTM_he_thong_canh_bao_thoi_gian_thuc/blob/main/docs/giao_dien_server.png" alt="Ảnh 7" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 7: Nhắn tin trao đổi thông tin giữa người thuê và người cho thuê  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/xem_tro_tren_ggmap.png" alt="Ảnh 8" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 8: Xem địa chỉ trọ trên Google Map  </em>
+</p>
+
+
+---
+
+## ⚙️ 4. Các bước cài đặt
+
+1. Các bước cài đặt và chạy chương trình
+
+- Bước 1. Giải nén dự án
+
+    - Giải nén file BTL.zip vào một thư mục bất kỳ.
+
+- Bước 2. Cài đặt môi trường
+
+    - Cài Node.js (phiên bản ≥ 18).
+
+    - Cài MongoDB (nếu dự án sử dụng cơ sở dữ liệu này).
+
+- Bước 3. Cài đặt thư viện
+
+    - Mở Terminal hoặc CMD tại thư mục gốc của dự án và chạy lệnh:
+
+            npm install
+
+    - Sau đó di chuyển vào thư mục client để cài thư viện cho giao diện:
+
+            cd client
+    
+            npm install
+
+
+- Bước 4. Cấu hình biến môi trường
+
+    - Tạo file .env trong thư mục chính (nếu chưa có).
+
+    - Điền các thông tin kết nối, ví dụ:
+
+            PORT=5000
+
+            MONGO_URI=mongodb://localhost:27017/tenCSDL
+
+            JWT_SECRET=secret_key
+
+- Bước 5. Chạy chương trình
+
+    - Mở hai cửa sổ terminal:
+    
+    - Cửa sổ 1 (backend):
+
+            npm start
+
+    - Cửa sổ 2 (frontend):
+
+            cd client
+
+            npm run dev
+
+    - Sau khi khởi chạy, mở trình duyệt và truy cập địa chỉ:
+
+            👉 http://localhost:5173
+      
+             (hoặc cổng hiển thị trong terminal).
+
+- Bước 6. Kiểm tra hoạt động
+
+    - Đăng ký / Đăng nhập người dùng.
+
+    - Kiểm tra các chức năng chính: thêm, sửa, xóa, tìm kiếm, upload...
+
+## 👥 5. Nhóm thực hiện
+
+- Nhóm 9: Nguyễn Quang Tiến & Hoàng Công Sơn
+
+- Lớp: CNTT 16-03
+
+- Khoa: Công nghệ thông tin
+
+- Trường: Đại học Đại Nam
+
+**Giảng viên hướng dẫn:** ThS. Nguyễn Văn Nhân  
+
+© 2025 – Khoa Công Nghệ Thông Tin, Trường Đại học Đại Nam.
