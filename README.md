@@ -166,6 +166,6 @@ Bước 6. Kiểm tra hoạt động
 
 - Trường: Đại học Đại Nam
 
-**Giảng viên hướng dẫn:** Ths Lê Trung Hiếu  
+**Giảng viên hướng dẫn:** Ths. Lê Trung Hiếu  
 
 © 2025 – Khoa Công Nghệ Thông Tin, Trường Đại học Đại Nam.
