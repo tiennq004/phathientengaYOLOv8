@@ -158,7 +158,7 @@ Bước 6. Kiểm tra hoạt động
 
 ## 👥 5. Nhóm thực hiện
 
-- Nhóm 9: Nguyễn Quang Tiến & Hoàng Công Sơn
+- Nhóm 9: Nguyễn Quang Tiến
 
 - Lớp: CNTT 16-03
 
@@ -166,6 +166,6 @@ Bước 6. Kiểm tra hoạt động
 
 - Trường: Đại học Đại Nam
 
-**Giảng viên hướng dẫn:** ThS. Nguyễn Văn Nhân  
+**Giảng viên hướng dẫn:** Ths Lê Trung Hiếu  
 
 © 2025 – Khoa Công Nghệ Thông Tin, Trường Đại học Đại Nam.
