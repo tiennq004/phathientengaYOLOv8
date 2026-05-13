@@ -99,13 +99,27 @@
 
 
 <p align="center">
-  <img src="https://github.com/tiennq004/cds_nha_tro-sinh_vien_ai/blob/main/img/giao_dien_chinh.png" alt="Ảnh 1" width="800"/>
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/ket_qua_huan_luyen_du_lieu.jpg" alt="Ảnh 1" width="800"/>
 </p> 
 <p align="center">
-  <em>Hình 1: Giao diện chính của hệ thống  </em>
+  <em>Hình 1: Kết quả sau khi huấn luyện dữ liệu  </em>
 </p>
 
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_2_not_fall.png" alt="Ảnh 2" width="800"/>
+    <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_1_not_fall.png" alt="Ảnh 3" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 2: Sau khi chạy code, khi chưa bị té ngã  </em>
+</p>
 
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_2_falled.png" alt="Ảnh 4" width="800"/>
+    <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_1_falled.png" alt="Ảnh 5" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 3: Khi té ngã  </em>
+</p>
 ---
 
 ## ⚙️ 4. Các bước cài đặt
