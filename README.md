@@ -141,7 +141,6 @@
 <p align="center">
   <em>Hình 6: Gửi cảnh báo về email cho người dùng </em>
 </p>
----
 
 ## ⚙️ 4. Các bước cài đặt
 
