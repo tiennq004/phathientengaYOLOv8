@@ -156,9 +156,9 @@ Bước 6. Kiểm tra hoạt động
 
  - Kiểm tra hộp thư đến của Email để nhận cảnh báo.
 
-## 👥 5. Nhóm thực hiện
+## 👥 5. Thực hiện
 
-- Nhóm 9: Nguyễn Quang Tiến
+- Nguyễn Quang Tiến
 
 - Lớp: CNTT 16-03
 
