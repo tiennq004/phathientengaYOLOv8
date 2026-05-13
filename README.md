@@ -120,6 +120,27 @@
 <p align="center">
   <em>Hình 3: Khi té ngã  </em>
 </p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/results.png" alt="Ảnh 6" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 4: Kết quả tính góc độ cơ thể </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/output_fall.png" alt="Ảnh 7" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 5: Hệ thống lưu dữ liệu khi phát hiện có người té ngã </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/canh_bao_gui_ve_gmail.png" alt="Ảnh 8" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 6: Gửi cảnh báo về email cho người dùng </em>
+</p>
 ---
 
 ## ⚙️ 4. Các bước cài đặt
