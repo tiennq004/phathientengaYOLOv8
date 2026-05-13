@@ -115,7 +115,7 @@
 
 <p align="center">
   <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_2_falled.png" alt="Ảnh 4" width="800"/>
-    <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_1_falled.png" alt="Ảnh 5" width="800"/>
+    <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/video_1_fall.png" alt="Ảnh 5" width="800"/>
 </p> 
 <p align="center">
   <em>Hình 3: Khi té ngã  </em>
