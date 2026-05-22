@@ -1,0 +1,28 @@
+<details class="imou-panel" id="imouPanel">
+  <summary>
+    <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    Camera Imou Life (RTSP)
+  </summary>
+  <form id="imouForm" class="imou-form">
+    <p class="imou-hint">Máy chạy ứng dụng phải <strong>cùng Wi‑Fi/LAN</strong> với camera. Bật RTSP trong app Imou Life (Cài đặt thiết bị → Mạng).</p>
+    <div class="imou-grid">
+      <label class="field-text"><span>IP camera (LAN)</span><input type="text" name="ip" id="imouIp" placeholder="192.168.1.100" autocomplete="off" /></label>
+      <label class="field-text"><span>Tài khoản</span><input type="text" name="username" id="imouUser" value="admin" autocomplete="username" /></label>
+      <label class="field-text"><span>Mật khẩu RTSP</span><input type="password" name="password" id="imouPassword" placeholder="Mật khẩu thiết bị" autocomplete="current-password" /></label>
+      <label class="field-text"><span>Luồng</span>
+        <select name="subtype" id="imouSubtype">
+          <option value="1">Phụ (nhẹ, khuyến nghị)</option>
+          <option value="0">Chính (HD)</option>
+        </select>
+      </label>
+    </div>
+    <label class="field-text field-full"><span>Hoặc URL RTSP đầy đủ</span><input type="text" name="rtsp_url" id="imouRtspUrl" placeholder="" autocomplete="off" /></label>
+    <div class="control-bar imou-actions">
+      <button type="button" id="btnStartImou" class="btn btn-primary">
+        <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg>
+        Kết nối Imou
+      </button>
+      <button type="button" id="btnTestRtsp" class="btn btn-ghost btn-sm">Thử trong VLC</button>
+    </div>
+  </form>
+</details>

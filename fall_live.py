@@ -172,6 +172,62 @@ def filter_boxes_by_motion(
     return kept
 
 
+def finalize_pending_alert(
+    pending: Optional[tuple[Path, Path, str]],
+    pre_frames: List[np.ndarray],
+    post_frames: List[np.ndarray],
+    fps: float,
+    args: argparse.Namespace,
+    send_threads: List[threading.Thread],
+    immediate_image_sent: bool,
+    reason: str,
+) -> None:
+    """Gửi email cảnh báo khi video ngắn / dừng sớm trước khi ghi đủ clip."""
+    if pending is None:
+        return
+    img_path, vid_path, stamp = pending
+    clip_frames = pre_frames + post_frames
+    if clip_frames:
+        write_mp4(clip_frames, vid_path, fps)
+        print(f"Da luu clip (ket thuc som): {vid_path}")
+
+    if args.no_email or not (args.to_email and args.smtp_user and args.smtp_password):
+        return
+    if not img_path.is_file():
+        return
+    has_video = vid_path.is_file() and vid_path.stat().st_size > 0
+
+    def _send() -> None:
+        try:
+            if has_video:
+                send_image_video_email(
+                    args.to_email,
+                    f"[Fall] Canh bao te nga - {stamp}",
+                    f"Phat hien te nga luc: {stamp}\n(Gui khi {reason}, clip co the ngan hon binh thuong.)",
+                    img_path,
+                    vid_path,
+                    args.smtp_user,
+                    args.smtp_password,
+                )
+                print("Da gui mail anh + video (ket thuc som).")
+            elif not immediate_image_sent:
+                send_image_email(
+                    args.to_email,
+                    f"[Fall] Canh bao te nga - {stamp}",
+                    f"Phat hien te nga luc: {stamp}\n(Gui khi {reason}.)",
+                    img_path,
+                    args.smtp_user,
+                    args.smtp_password,
+                )
+                print("Da gui mail anh (ket thuc som).")
+        except Exception as err:
+            print(f"Loi gui mail ket thuc som: {err}")
+
+    t = threading.Thread(target=_send)
+    t.start()
+    send_threads.append(t)
+
+
 def write_mp4(frames: List[np.ndarray], out_path: Path, fps: float) -> None:
     if not frames:
         return
@@ -270,7 +326,7 @@ def main() -> None:
     parser.add_argument("--test-email", action="store_true")
     parser.add_argument("--detect-every-n-frames", type=int, default=1)
     parser.add_argument("--display-width", type=int, default=960)
-    parser.add_argument("--detect-width", type=int, default=768)
+    parser.add_argument("--detect-width", type=int, default=640)
     parser.add_argument(
         "--hog-min-score",
         type=float,
@@ -283,7 +339,7 @@ def main() -> None:
         default=0.03,
         help="Ty le pixel chuyen dong toi thieu trong box HOG de loai bo vat the dung yen.",
     )
-    parser.add_argument("--target-process-fps", type=float, default=10.0)
+    parser.add_argument("--target-process-fps", type=float, default=12.0)
     parser.add_argument(
         "--box-smooth-alpha",
         type=float,
@@ -351,6 +407,7 @@ def main() -> None:
     if not cap.isOpened():
         print(f"Khong mo duoc nguon video/camera: {src}")
         sys.exit(1)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
     fps = float(cap.get(cv2.CAP_PROP_FPS) or 30.0)
     if fps < 1.0:
@@ -362,7 +419,7 @@ def main() -> None:
     if mp is not None:
         pose_estimator = mp.solutions.pose.Pose(
             static_image_mode=False,
-            model_complexity=1,
+            model_complexity=0,
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5,
         )
@@ -395,16 +452,23 @@ def main() -> None:
     post_frames: List[np.ndarray] = []
     pre_frames: List[np.ndarray] = []
     pending: Optional[tuple[Path, Path, str]] = None
+    immediate_image_sent = False
     alert_count = 0
 
     while True:
+        if is_video_file and target_frame_interval > 0:
+            now_wall = time.time()
+            remain = target_frame_interval - (now_wall - last_frame_wall_time)
+            if remain > 0:
+                time.sleep(remain)
+            last_frame_wall_time = time.time()
+
         ok, frame = cap.read()
         if not ok:
             break
 
         frame_idx += 1
         ring.append(frame.copy())
-        curr_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         if args.display_width > 0 and frame.shape[1] > args.display_width:
             disp_scale = args.display_width / float(frame.shape[1])
             display = cv2.resize(frame, (args.display_width, int(frame.shape[0] * disp_scale)))
@@ -412,10 +476,15 @@ def main() -> None:
             display = frame.copy()
         h, _ = frame.shape[:2]
         do_detect = (frame_idx % max(1, args.detect_every_n_frames) == 0) and (frame_idx % process_every == 0)
+        fall_hit = last_fall_hit
         if do_detect:
             has_pose, torso_angle, pose_aspect, pose_bbox, pose_conf = detect_fall_pose(frame, pose_estimator)
-            boxes = detect_people_hog_fast(frame, hog, args.detect_width, args.hog_min_score)
-            boxes = filter_boxes_by_motion(boxes, prev_gray, curr_gray, args.hog_min_motion)
+            boxes: List[tuple[int, int, int, int, float]] = []
+            if not has_pose:
+                curr_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                boxes = detect_people_hog_fast(frame, hog, args.detect_width, args.hog_min_score)
+                boxes = filter_boxes_by_motion(boxes, prev_gray, curr_gray, args.hog_min_motion)
+                prev_gray = curr_gray
             boxes = boxes[: max(1, int(args.max_people))]
             # Prefer pose bbox for stable person framing; fallback to HOG when pose is unavailable.
             if has_pose and pose_bbox is not None:
@@ -468,8 +537,6 @@ def main() -> None:
                 cy_hist.clear()
                 fall_hit = False
             last_fall_hit = fall_hit
-        else:
-            fall_hit = last_fall_hit
 
         now = time.time()
         if fall_hit:
@@ -522,6 +589,7 @@ def main() -> None:
                 and args.smtp_user
                 and args.smtp_password
             ):
+                immediate_image_sent = True
 
                 def _send_img() -> None:
                     try:
@@ -590,17 +658,19 @@ def main() -> None:
             cv2.putText(display, "FALL DETECTED", (40, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.6, (0, 0, 255), 4, cv2.LINE_AA)
 
         cv2.imshow("Fall detection", display)
-        if is_video_file and target_frame_interval > 0:
-            now_wall = time.time()
-            elapsed = now_wall - last_frame_wall_time
-            remain = target_frame_interval - elapsed
-            if remain > 0:
-                time.sleep(remain)
-            last_frame_wall_time = time.time()
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
-        prev_gray = curr_gray
 
+    finalize_pending_alert(
+        pending,
+        pre_frames,
+        post_frames,
+        fps,
+        args,
+        send_threads,
+        immediate_image_sent,
+        "dung hoac video ket thuc",
+    )
     cap.release()
     cv2.destroyAllWindows()
     if pose_estimator is not None:

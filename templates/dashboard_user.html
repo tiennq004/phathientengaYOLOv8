@@ -1,0 +1,28 @@
+{% extends "_dashboard_base.html" %}
+
+{% block title %}Giám sát{% endblock %}
+{% block body_class %}page-user{% endblock %}
+{% block page_heading %}Giám sát té ngã{% endblock %}
+{% block layout_class %}layout-user{% endblock %}
+
+{% block header_actions %}{% endblock %}
+{% block header_tools %}{% endblock %}
+
+{% block content %}
+<div class="main-grid main-grid-user">
+  {% include "_includes/video_panel.html" %}
+
+  <aside class="panel panel-user-info glass-panel">
+    <div class="panel-head"><h2>Hướng dẫn nhanh</h2></div>
+    <ul class="perm-list">
+      <li class="perm-yes"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Xem luồng giám sát</li>
+      <li class="perm-yes"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Webcam & camera Imou</li>
+      <li class="perm-yes"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Phân tích file video</li>
+      <li class="perm-yes"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Xem lịch sử té ngã</li>
+    </ul>
+    <p class="user-note">Cần chỉnh độ nhạy phát hiện? Liên hệ <strong>Quản trị viên</strong>.</p>
+  </aside>
+</div>
+
+{% include "_includes/history_panel.html" %}
+{% endblock %}

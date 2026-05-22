@@ -1,0 +1,79 @@
+{% extends "_dashboard_base.html" %}
+
+{% block title %}Quản trị{% endblock %}
+{% block body_class %}page-admin{% endblock %}
+{% block page_heading %}Bảng điều khiển quản trị{% endblock %}
+{% block layout_class %}layout-admin{% endblock %}
+
+{% block header_actions %}
+<div class="header-clock" aria-hidden="true">
+  <span id="liveClock" class="live-clock">--:--:--</span>
+  <span id="sessionUptime" class="session-uptime">Phiên: 00:00</span>
+</div>
+{% endblock %}
+
+{% block header_tools %}
+<button type="button" id="btnTestEmail" class="btn btn-ghost">
+  <svg class="btn-svg icon-wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+  Kiểm tra email
+</button>
+{% endblock %}
+
+{% block content %}
+<section class="stats-row">
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-float"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+    <p class="stat-label">Trạng thái</p>
+    <p id="statRunning" class="stat-value">Dừng</p>
+  </article>
+  <article class="stat-card stat-card-accent">
+    <div class="stat-icon-wrap icon-pulse-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+    <p class="stat-label">Cảnh báo</p>
+    <p id="statAlerts" class="stat-value">0</p>
+  </article>
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-float-delay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/></svg></div>
+    <p class="stat-label">Khung hình</p>
+    <p id="statFrames" class="stat-value">0</p>
+  </article>
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-spin-slow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83"/></svg></div>
+    <p class="stat-label">Bộ phát hiện</p>
+    <p id="statDetector" class="stat-value stat-value-sm">—</p>
+  </article>
+  <article class="stat-card stat-card-live">
+    <div class="stat-icon-wrap icon-float"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <p class="stat-label">Tốc độ xử lý</p>
+    <p id="statFps" class="stat-value">— <span class="stat-unit">fps</span></p>
+  </article>
+</section>
+
+<div class="main-grid main-grid-admin">
+  {% include "_includes/video_panel.html" %}
+
+  <aside class="panel panel-settings glass-panel">
+    <div class="panel-head">
+      <h2><svg class="inline-icon icon-wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> Cấu hình hệ thống</h2>
+    </div>
+    <form id="configForm" class="config-form">
+      <label class="field"><span>Ngưỡng aspect</span><input type="range" name="fall_aspect_threshold" min="0.5" max="2" step="0.05" value="0.95" /><output data-for="fall_aspect_threshold">0.95</output></label>
+      <label class="field"><span>Ngưỡng drop</span><input type="range" name="fall_drop_threshold" min="0.0005" max="0.02" step="0.0005" value="0.0025" /><output data-for="fall_drop_threshold">0.0025</output></label>
+      <label class="field"><span>Góc pose (°)</span><input type="range" name="pose_angle_threshold" min="15" max="80" step="1" value="45" /><output data-for="pose_angle_threshold">45</output></label>
+      <label class="field"><span>Ngưỡng horizontal</span><input type="range" name="horizontal_only_threshold" min="0.8" max="2" step="0.05" value="1.15" /><output data-for="horizontal_only_threshold">1.15</output></label>
+      <label class="field"><span>HOG min score</span><input type="range" name="hog_min_score" min="0.2" max="1.5" step="0.05" value="0.6" /><output data-for="hog_min_score">0.6</output></label>
+      <label class="field"><span>Cooldown (giây)</span><input type="range" name="cooldown_sec" min="10" max="120" step="5" value="45" /><output data-for="cooldown_sec">45</output></label>
+      <div class="toggles">
+        <label class="toggle"><input type="checkbox" name="no_email" /><span>Tắt email</span></label>
+        <label class="toggle"><input type="checkbox" name="send_immediate_image" checked /><span>Gửi ảnh ngay</span></label>
+      </div>
+      <button type="submit" class="btn btn-outline btn-block">Lưu cấu hình</button>
+    </form>
+    <div class="info-cards">
+      <article class="info-card"><h3>MediaPipe</h3><p>Phân tích tư thế 17 điểm.</p></article>
+      <article class="info-card info-card-mail"><h3>Email</h3><p id="emailStatus">Đang kiểm tra…</p></article>
+    </div>
+  </aside>
+</div>
+
+{% include "_includes/history_panel.html" %}
+{% endblock %}

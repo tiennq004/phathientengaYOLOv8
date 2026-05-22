@@ -1,0 +1,40 @@
+<section class="panel panel-video glass-panel">
+  <div class="panel-head">
+    <h2><svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Luồng giám sát</h2>
+    <p id="sourceLabel" class="panel-sub">Chưa chọn nguồn</p>
+  </div>
+  <div class="video-wrap" id="videoWrap">
+    <div id="videoIdle" class="video-idle">
+      <div class="idle-rings" aria-hidden="true"><span></span><span></span><span></span></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      <p>Chưa có luồng — bấm <strong>Webcam</strong> hoặc <strong>Kết nối Imou</strong></p>
+    </div>
+    <img id="videoStream" src="{{ url_for('video_feed') }}" alt="Luồng video" />
+    <div id="fallOverlay" class="fall-overlay hidden">
+      <span class="fall-badge">FALL DETECTED</span>
+      <span class="fall-pulse-ring" aria-hidden="true"></span>
+    </div>
+    <div class="video-toolbar">
+      <button type="button" id="btnFullscreen" class="btn-video-tool" title="Toàn màn hình" aria-label="Toàn màn hình">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
+    </div>
+    <div id="scanLine" class="scan-line hidden" aria-hidden="true"></div>
+  </div>
+  <p id="lastMessage" class="message-bar">Sẵn sàng — chọn webcam, camera Imou hoặc tải video.</p>
+  <div class="control-bar">
+    <button type="button" id="btnStartCam" class="btn btn-primary">
+      <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Webcam
+    </button>
+    <label class="btn btn-secondary upload-btn">
+      <input type="file" id="fileInput" accept=".mp4,.avi,.mov,.mkv,.webm" hidden />
+      <svg class="btn-svg icon-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg> Tải video
+    </label>
+    <button type="button" id="btnStartVideo" class="btn btn-secondary" disabled>Phân tích video</button>
+    <button type="button" id="btnStop" class="btn btn-danger" disabled>
+      <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Dừng
+    </button>
+  </div>
+  <p id="uploadName" class="upload-hint"></p>
+  {% include "_includes/imou_panel.html" %}
+</section>

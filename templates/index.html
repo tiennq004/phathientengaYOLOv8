@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hệ thống phát hiện té ngã | DaiNam FIT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          <circle cx="12" cy="12" r="4"/>
+        </svg>
+      </div>
+      <div>
+        <p class="brand-kicker">AIoTLab · Đại Nam University</p>
+        <h1>Phát hiện té ngã thời gian thực</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span id="statusPill" class="pill pill-idle">Chưa chạy</span>
+      <button type="button" id="btnTestEmail" class="btn btn-ghost">Kiểm tra email</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stats-row" aria-label="Thống kê">
+      <article class="stat-card">
+        <p class="stat-label">Trạng thái</p>
+        <p id="statRunning" class="stat-value">Dừng</p>
+        <p class="stat-hint">Phiên giám sát</p>
+      </article>
+      <article class="stat-card stat-card-accent">
+        <p class="stat-label">Cảnh báo</p>
+        <p id="statAlerts" class="stat-value">0</p>
+        <p class="stat-hint">Sự kiện té ngã</p>
+      </article>
+      <article class="stat-card">
+        <p class="stat-label">Khung hình</p>
+        <p id="statFrames" class="stat-value">0</p>
+        <p class="stat-hint">Đã xử lý</p>
+      </article>
+      <article class="stat-card">
+        <p class="stat-label">Bộ phát hiện</p>
+        <p id="statDetector" class="stat-value stat-value-sm">—</p>
+        <p class="stat-hint">MediaPipe / HOG</p>
+      </article>
+    </section>
+
+    <div class="main-grid">
+      <section class="panel panel-video">
+        <div class="panel-head">
+          <h2>Luồng giám sát</h2>
+          <p id="sourceLabel" class="panel-sub">Chưa chọn nguồn</p>
+        </div>
+        <div class="video-wrap" id="videoWrap">
+          <img id="videoStream" src="{{ url_for('video_feed') }}" alt="Luồng video phát hiện té ngã" />
+          <div id="fallOverlay" class="fall-overlay hidden" aria-live="assertive">
+            <span class="fall-badge">FALL DETECTED</span>
+          </div>
+        </div>
+        <p id="lastMessage" class="message-bar">Sẵn sàng — chọn webcam hoặc tải video để bắt đầu.</p>
+
+        <div class="control-bar">
+          <button type="button" id="btnStartCam" class="btn btn-primary">
+            <span class="btn-icon">▶</span> Webcam
+          </button>
+          <label class="btn btn-secondary upload-btn">
+            <input type="file" id="fileInput" accept=".mp4,.avi,.mov,.mkv,.webm" hidden />
+            <span class="btn-icon">↑</span> Tải video
+          </label>
+          <button type="button" id="btnStartVideo" class="btn btn-secondary" disabled>
+            Phân tích video
+          </button>
+          <button type="button" id="btnStop" class="btn btn-danger" disabled>Dừng</button>
+        </div>
+        <p id="uploadName" class="upload-hint"></p>
+      </section>
+
+      <aside class="panel panel-settings">
+        <div class="panel-head">
+          <h2>Cấu hình phát hiện</h2>
+          <p class="panel-sub">Điều chỉnh độ nhạy trước khi chạy</p>
+        </div>
+
+        <form id="configForm" class="config-form">
+          <label class="field">
+            <span>Ngưỡng tỉ lệ ngang (aspect)</span>
+            <input type="range" name="fall_aspect_threshold" min="0.5" max="2" step="0.05" value="0.95" />
+            <output data-for="fall_aspect_threshold">0.95</output>
+          </label>
+          <label class="field">
+            <span>Ngưỡng rơi theo trục Y (drop)</span>
+            <input type="range" name="fall_drop_threshold" min="0.0005" max="0.02" step="0.0005" value="0.0025" />
+            <output data-for="fall_drop_threshold">0.0025</output>
+          </label>
+          <label class="field">
+            <span>Góc thân tối đa (pose°, nhỏ = nằm ngang)</span>
+            <input type="range" name="pose_angle_threshold" min="15" max="80" step="1" value="45" />
+            <output data-for="pose_angle_threshold">45</output>
+          </label>
+          <label class="field">
+            <span>Ngưỡng nằm ngang (horizontal)</span>
+            <input type="range" name="horizontal_only_threshold" min="0.8" max="2" step="0.05" value="1.15" />
+            <output data-for="horizontal_only_threshold">1.15</output>
+          </label>
+          <label class="field">
+            <span>Điểm HOG tối thiểu</span>
+            <input type="range" name="hog_min_score" min="0.2" max="1.5" step="0.05" value="0.6" />
+            <output data-for="hog_min_score">0.6</output>
+          </label>
+          <label class="field">
+            <span>Cooldown cảnh báo (giây)</span>
+            <input type="range" name="cooldown_sec" min="10" max="120" step="5" value="45" />
+            <output data-for="cooldown_sec">45</output>
+          </label>
+
+          <div class="toggles">
+            <label class="toggle">
+              <input type="checkbox" name="no_email" />
+              <span>Tắt gửi email</span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" name="send_immediate_image" checked />
+              <span>Gửi ảnh ngay khi phát hiện</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-outline btn-block">Lưu cấu hình</button>
+        </form>
+
+        <div class="info-cards">
+          <article class="info-card">
+            <h3>MediaPipe Pose</h3>
+            <p>Phân tích 17 điểm khớp, góc thân và tỉ lệ khung hình.</p>
+          </article>
+          <article class="info-card">
+            <h3>HOG + chuyển động</h3>
+            <p>Dự phòng khi pose bị che khuất; lọc vật thể đứng yên.</p>
+          </article>
+          <article class="info-card info-card-mail">
+            <h3>Email cảnh báo</h3>
+            <p id="emailStatus">Đang kiểm tra…</p>
+          </article>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel panel-history">
+      <div class="panel-head">
+        <h2>Lịch sử sự kiện té ngã</h2>
+        <button type="button" id="btnRefreshFalls" class="btn btn-ghost btn-sm">Làm mới</button>
+      </div>
+      <div id="fallsGallery" class="falls-gallery">
+        <p class="empty-state">Chưa có sự kiện nào được lưu.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 Khoa CNTT — Đại học Đại Nam · Hệ thống phát hiện té ngã từ video</p>
+  </footer>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
