@@ -21,6 +21,7 @@ from fall_live import (
     send_image_video_email,
     write_mp4,
 )
+from iot_alert import iot_config_from_env
 
 try:
     import mediapipe as mp
@@ -115,6 +116,9 @@ class FallDetectorSession:
             "detector_mode": "—",
             "last_box_score": 0.0,
             "email_enabled": False,
+            "iot_enabled": False,
+            "iot_configured": False,
+            "last_iot_ok": None,
             "last_message": "",
             "last_alert_time": "",
             "pose_available": mp is not None,
@@ -142,6 +146,7 @@ class FallDetectorSession:
             "to_email": cfg.to_email,
             "smtp_user": cfg.smtp_user,
             "smtp_configured": bool(cfg.smtp_user and cfg.smtp_password and cfg.to_email),
+            **iot_config_from_env(),
         }
 
     def update_config(self, updates: Dict[str, Any]) -> None:
@@ -176,6 +181,30 @@ class FallDetectorSession:
         with self._lock:
             return self._latest_jpeg
 
+    def _notify_iot_alert(self, stamp: str) -> None:
+        iot = iot_config_from_env()
+        if not iot.get("enabled") or not iot.get("alert_url"):
+            return
+
+        def _run() -> None:
+            from iot_alert import get_last_iot_error, trigger_iot_alert
+
+            ok = trigger_iot_alert("fall", stamp)
+            if ok:
+                self._set_status(
+                    last_iot_ok=True,
+                    last_message=f"Cảnh báo té ngã lúc {stamp} — ESP32 đã nhận tín hiệu.",
+                )
+            else:
+                self._set_status(
+                    last_iot_ok=False,
+                    last_message=f"Cảnh báo té ngã lúc {stamp} — ESP32: {get_last_iot_error()}",
+                )
+
+        t = threading.Thread(target=_run, daemon=True)
+        t.start()
+        self._send_threads.append(t)
+
     def start(self, source: Any, source_label: str = "") -> None:
         if self.is_running():
             raise RuntimeError("Phiên phát hiện đang chạy.")
@@ -192,6 +221,9 @@ class FallDetectorSession:
         self._status["email_enabled"] = (
             not cfg.no_email and bool(cfg.to_email and cfg.smtp_user and cfg.smtp_password)
         )
+        iot = iot_config_from_env()
+        self._status["iot_enabled"] = bool(iot.get("enabled"))
+        self._status["iot_configured"] = bool(iot.get("configured"))
         self._capture_thread = threading.Thread(target=self._capture_loop, daemon=True)
         self._detect_thread = threading.Thread(target=self._detect_loop, daemon=True)
         self._capture_thread.start()
@@ -561,6 +593,7 @@ class FallDetectorSession:
                     last_alert_time=stamp,
                     last_message=f"Cảnh báo té ngã lúc {stamp}",
                 )
+                self._notify_iot_alert(stamp)
 
                 if (
                     cfg.send_immediate_image

@@ -10,10 +10,11 @@ from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.utils import secure_filename
 
-from auth import admin_required, authenticate, current_user, home_for_role, init_users, login_required, user_required
+from auth import admin_required, authenticate, current_user, home_for_role, init_users, login_required, sync_session, user_required
 from camera_utils import imou_defaults_from_env, resolve_imou_rtsp_url
 from fall_detector_session import FallDetectorSession
 from fall_live import send_image_email
+from iot_alert import get_last_iot_error, iot_config_from_env, ping_iot_device, trigger_iot_alert
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
@@ -28,6 +29,11 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "fall-guard-dev-change-m
 
 init_users()
 detector = FallDetectorSession()
+
+
+@app.before_request
+def _sync_auth_session() -> None:
+    sync_session()
 
 
 def _allowed_file(filename: str) -> bool:
@@ -262,6 +268,35 @@ def api_falls():
 @login_required
 def serve_fall_asset(filename: str):
     return send_from_directory(OUTPUT_DIR, filename)
+
+
+@app.get("/api/iot/config")
+@login_required
+def api_iot_config():
+    return jsonify({"ok": True, **iot_config_from_env()})
+
+
+@app.post("/api/test-iot")
+@login_required
+def api_test_iot():
+    cfg = iot_config_from_env()
+    if not cfg.get("enabled"):
+        return jsonify({"ok": False, "error": "Dat IOT_ENABLED=true trong file .env"}), 400
+    if not cfg.get("alert_url"):
+        return jsonify({"ok": False, "error": "Thieu ESP32_ALERT_URL trong file .env"}), 400
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if trigger_iot_alert("test", stamp):
+        return jsonify({"ok": True, "message": "ESP32 da nhan tin hieu test."})
+    return jsonify({"ok": False, "error": get_last_iot_error() or "Khong ket noi ESP32."}), 502
+
+
+@app.get("/api/iot/ping")
+@login_required
+def api_iot_ping():
+    result = ping_iot_device()
+    if result.get("ok"):
+        return jsonify({"ok": True, **result})
+    return jsonify({"ok": False, "error": result.get("error", "Loi ket noi.")}), 502
 
 
 @app.post("/api/test-email")

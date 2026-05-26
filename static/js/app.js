@@ -62,6 +62,8 @@
 
     btnTestEmail: $("#btnTestEmail"),
 
+    btnTestIot: $("#btnTestIot"),
+
     btnRefreshFalls: $("#btnRefreshFalls"),
 
     btnLogout: $("#btnLogout"),
@@ -150,29 +152,45 @@
 
     const saved = localStorage.getItem("fallguard-theme");
 
-    if (saved === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    if (saved === "light") document.documentElement.setAttribute("data-theme", "light");
 
     if (els.btnTheme) {
 
       els.btnTheme.addEventListener("click", () => {
 
-        const dark = document.documentElement.getAttribute("data-theme") === "dark";
+        const light = document.documentElement.getAttribute("data-theme") === "light";
 
-        if (dark) {
+        if (light) {
 
           document.documentElement.removeAttribute("data-theme");
 
-          localStorage.setItem("fallguard-theme", "light");
+          localStorage.setItem("fallguard-theme", "purple");
 
         } else {
 
-          document.documentElement.setAttribute("data-theme", "dark");
+          document.documentElement.setAttribute("data-theme", "light");
 
-          localStorage.setItem("fallguard-theme", "dark");
+          localStorage.setItem("fallguard-theme", "light");
 
         }
 
       });
+
+    }
+
+  }
+
+
+
+  function checkAccessDenied() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("access") === "denied") {
+
+      showToast("Bạn không có quyền truy cập trang đó.", "err");
+
+      window.history.replaceState({}, "", window.location.pathname);
 
     }
 
@@ -646,7 +664,7 @@
 
 
 
-  if (els.configForm) {
+  if (els.configForm && isAdmin) {
 
     els.configForm.addEventListener("submit", async (e) => {
 
@@ -859,6 +877,34 @@
 
 
 
+  if (els.btnTestIot) {
+
+    els.btnTestIot.addEventListener("click", async () => {
+
+      els.btnTestIot.disabled = true;
+
+      try {
+
+        const data = await api("/api/test-iot", { method: "POST" });
+
+        showToast(data.message || "ESP32 đã nhận tín hiệu.", "ok");
+
+      } catch (err) {
+
+        showToast(err.message, "err");
+
+      } finally {
+
+        els.btnTestIot.disabled = false;
+
+      }
+
+    });
+
+  }
+
+
+
   els.btnLogout.addEventListener("click", async () => {
 
     try {
@@ -992,6 +1038,8 @@
 
 
   initTheme();
+
+  checkAccessDenied();
 
   bindRangeOutputs();
 

@@ -50,9 +50,11 @@
 
 - Local Logger: Lưu trữ video clip các vụ té ngã vào thư mục outputs/falls để làm bằng chứng đối chiếu.
 
+- IoT ESP32: Khi xác nhận té ngã, máy tính gửi HTTP tới ESP32 trên LAN — board bật LED/buzzer làm chuông báo vật lý (không cần cloud, chi phí ~0đ).
+
 💡 Điểm nổi bật
 
-- 💬 Cảnh báo đa phương thức: Gửi email ảnh ngay lập tức và video clip ngay sau khi sự cố kết thúc.
+- 💬 Cảnh báo đa phương thức: Gửi email ảnh ngay lập tức, video clip sau sự cố, và tín hiệu IoT tới ESP32.
 
 - 🏃 Xử lý luồng tối ưu: Hỗ trợ đa luồng (threading) cho việc gửi email, không gây giật lag luồng xử lý ảnh chính.
 
@@ -66,7 +68,7 @@
        ↓
     Processing (OpenCV + MediaPipe + HOG)
        ↓
-    Alert (SMTP Service + Threading)
+    Alert (SMTP + ESP32 HTTP IoT + Threading)
 
 🖥️ Công nghệ xử lý chính
 
@@ -81,6 +83,8 @@
 💻 Dịch vụ và giao thức
 
  - SMTP (Gmail): Gửi thông báo khẩn cấp.
+
+ - HTTP LAN → ESP32: Thiết bị IoT cảnh báo tại chỗ (WiFi + WebServer trên board).
 
  - Python-dotenv: Quản lý cấu hình hệ thống.
 
@@ -174,6 +178,11 @@ Bước 4. Cấu hình biến môi trường
         
         ALERT_TO_EMAIL=recipient_email@gmail.com
 
+ - (Tuỳ chọn) IoT ESP32 — xem chi tiết trong [esp32/README.md](esp32/README.md):
+
+        IOT_ENABLED=true
+        ESP32_ALERT_URL=http://192.168.1.50/alert
+
 Bước 5. Chạy chương trình
 
  - Chạy với Webcam:
@@ -189,6 +198,8 @@ Bước 6. Kiểm tra hoạt động
  - Khi có người té ngã, màn hình sẽ hiển thị dòng chữ "FALL DETECTED" màu đỏ.
 
  - Kiểm tra hộp thư đến của Email để nhận cảnh báo.
+
+ - Nếu bật IoT: bấm **Kiểm tra ESP32** trên giao diện web hoặc mở `http://<IP_ESP32>/` — khi té ngã, LED/buzzer trên board sẽ kích hoạt.
 
 ## 👥 5. Thực hiện
 
