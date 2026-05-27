@@ -359,7 +359,7 @@
 
 
   function readConfigPayload() {
-
+    if (!els.configForm) return {};
     const fd = new FormData(els.configForm);
 
     return {
@@ -382,6 +382,13 @@
 
     };
 
+  }
+
+
+
+  function configForStart() {
+    const cfg = readConfigPayload();
+    return Object.keys(cfg).length ? { config: cfg } : {};
   }
 
 
@@ -732,7 +739,7 @@
 
         headers: { "Content-Type": "application/json" },
 
-        body: JSON.stringify({ mode: "camera", camera: 0 }),
+        body: JSON.stringify({ mode: "camera", camera: 0, ...configForStart() }),
 
       });
 
@@ -764,7 +771,7 @@
         await api("/api/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ ...payload, ...configForStart() }),
         });
         showToast("Đã kết nối camera Imou — đang giám sát.", "ok");
         pollStatus();
@@ -809,7 +816,11 @@
 
         headers: { "Content-Type": "application/json" },
 
-        body: JSON.stringify({ mode: "video", video_path: uploadedVideoPath }),
+        body: JSON.stringify({
+          mode: "video",
+          video_path: uploadedVideoPath,
+          ...configForStart(),
+        }),
 
       });
 

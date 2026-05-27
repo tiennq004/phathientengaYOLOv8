@@ -16,6 +16,7 @@ from camera_utils import classify_source
 from fall_live import (
     detect_fall_pose,
     detect_people_hog_fast,
+    fall_hit_from_pose,
     filter_boxes_by_motion,
     send_image_email,
     send_image_video_email,
@@ -119,6 +120,7 @@ class FallDetectorSession:
             "iot_enabled": False,
             "iot_configured": False,
             "last_iot_ok": None,
+            "last_iot_error": "",
             "last_message": "",
             "last_alert_time": "",
             "pose_available": mp is not None,
@@ -190,15 +192,18 @@ class FallDetectorSession:
             from iot_alert import get_last_iot_error, trigger_iot_alert
 
             ok = trigger_iot_alert("fall", stamp)
+            err = get_last_iot_error()
             if ok:
                 self._set_status(
                     last_iot_ok=True,
+                    last_iot_error="",
                     last_message=f"Cảnh báo té ngã lúc {stamp} — ESP32 đã nhận tín hiệu.",
                 )
             else:
                 self._set_status(
                     last_iot_ok=False,
-                    last_message=f"Cảnh báo té ngã lúc {stamp} — ESP32: {get_last_iot_error()}",
+                    last_iot_error=err,
+                    last_message=f"Cảnh báo té ngã lúc {stamp} — ESP32: {err}",
                 )
 
         t = threading.Thread(target=_run, daemon=True)
@@ -451,9 +456,13 @@ class FallDetectorSession:
 
             fall_hit = False
             if has_pose:
-                pose_horizontal = torso_angle <= cfg.pose_angle_threshold
-                pose_wide_and_tilted = (pose_aspect >= cfg.horizontal_only_threshold) and (torso_angle <= 70.0)
-                fall_hit = pose_horizontal or pose_wide_and_tilted
+                fall_hit = fall_hit_from_pose(
+                    torso_angle,
+                    pose_aspect,
+                    cfg.pose_angle_threshold,
+                    cfg.horizontal_only_threshold,
+                    cfg.fall_aspect_threshold,
+                )
             elif boxes:
                 x1, y1, x2, y2, _score = boxes[0]
                 bw = max(1, x2 - x1)

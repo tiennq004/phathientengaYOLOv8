@@ -1,125 +1,149 @@
 /*
- * Fall Guard — ESP32 IoT cảnh báo té ngã (0 đồng phần cứng thêm nếu chỉ dùng LED onboard)
- *
- * Cách hoạt động:
- *   - ESP32 kết nối WiFi, mở web server cổng 80
- *   - Máy tính chạy web_app.py gọi GET http://<IP_ESP32>/alert khi phát hiện té ngã
- *   - ESP32 bật LED + buzzer (nếu có) trong vài giây
- *
- * Sửa WIFI_SSID và WIFI_PASSWORD bên dưới trước khi nạp.
- * Arduino IDE: Board = ESP32 Dev Module, thư viện WiFi có sẵn.
+ * Fall Guard — ESP32 IoT (buzzer D4, LED R D5, LCD I2C 0x27)
+ * Python goi GET http://<IP>/alert khi phat hien te nga
+ * Thu vien: LiquidCrystal I2C (ZIP johnrickman)
  */
 
 #include <WiFi.h>
 #include <WebServer.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
-// --- Cấu hình WiFi (cùng mạng với máy chạy Python) ---
 const char* WIFI_SSID     = "Ten_WiFi_cua_ban";
 const char* WIFI_PASSWORD = "Mat_khau_WiFi";
 
-// GPIO: LED onboard thường là 2. Buzzer: cắm vào GPIO 4 (âm -> GND), hoặc đặt -1 nếu không có.
-const int LED_PIN    = 2;
-const int BUZZER_PIN = 4;   // -1 = không dùng buzzer
+const int LED_PIN     = 2;
+const int BUZZER_PIN  = 4;
+const int RGB_RED_PIN = 5;
 
-const unsigned long ALARM_MS = 15000;  // thời gian cảnh báo mỗi lần
+const bool BUZZER_ACTIVE     = false;
+const bool RGB_COMMON_ANODE  = false;
+const unsigned long ALARM_MS = 15000;
+
+const bool ENABLE_LCD        = true;
+const uint8_t LCD_I2C_ADDR   = 0x27;
+const int LCD_SDA            = 21;
+const int LCD_SCL            = 22;
 
 WebServer server(80);
+LiquidCrystal_I2C lcd(LCD_I2C_ADDR, 16, 2);
 
 unsigned long alarmUntil = 0;
-unsigned long lastAlertMs = 0;
+unsigned long lastLcdUpdate = 0;
 int alertCount = 0;
 String lastEvent = "none";
 String lastTime = "";
+bool buzzerPwmReady = false;
 
-void setAlarmActive(bool on) {
-  digitalWrite(LED_PIN, on ? HIGH : LOW);
-  if (BUZZER_PIN >= 0) {
+void buzzerOn(bool on) {
+  if (BUZZER_PIN < 0) return;
+  if (BUZZER_ACTIVE) {
     digitalWrite(BUZZER_PIN, on ? HIGH : LOW);
+    return;
+  }
+  if (!buzzerPwmReady) {
+    ledcAttach(BUZZER_PIN, 2500, 10);
+    buzzerPwmReady = true;
+  }
+  ledcWrite(BUZZER_PIN, on ? 700 : 0);
+}
+
+void rgbRed(bool on) {
+  if (RGB_RED_PIN < 0) return;
+  bool level = RGB_COMMON_ANODE ? !on : on;
+  digitalWrite(RGB_RED_PIN, level ? HIGH : LOW);
+}
+
+void outputsOff() {
+  digitalWrite(LED_PIN, LOW);
+  buzzerOn(false);
+  rgbRed(false);
+}
+
+void outputsAlarm(bool on) {
+  digitalWrite(LED_PIN, on ? HIGH : LOW);
+  buzzerOn(on);
+  rgbRed(on);
+}
+
+void updateLcd() {
+  if (!ENABLE_LCD) return;
+  lcd.clear();
+  if (millis() < alarmUntil) {
+    lcd.setCursor(0, 0);
+    lcd.print("!! CANH BAO !!");
+    lcd.setCursor(0, 1);
+    lcd.print("TE NGA lan ");
+    lcd.print(alertCount);
+  } else if (WiFi.status() == WL_CONNECTED) {
+    lcd.setCursor(0, 0);
+    lcd.print("Fall Guard san");
+    lcd.setCursor(0, 1);
+    lcd.print(WiFi.localIP());
+  } else {
+    lcd.setCursor(0, 0);
+    lcd.print("Fall Guard");
+    lcd.setCursor(0, 1);
+    lcd.print("Ket noi WiFi...");
   }
 }
 
 void startAlarm(const String& event, const String& t) {
   alarmUntil = millis() + ALARM_MS;
-  lastAlertMs = millis();
   alertCount++;
   lastEvent = event.length() ? event : "fall";
   lastTime = t.length() ? t : String(millis());
-  setAlarmActive(true);
-  Serial.printf("[ALERT] event=%s time=%s count=%d\n", lastEvent.c_str(), lastTime.c_str(), alertCount);
-}
-
-void handleRoot() {
-  String html = "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-    "<meta name='viewport' content='width=device-width,initial-scale=1'>"
-    "<title>Fall Guard ESP32</title></head><body style='font-family:sans-serif;padding:1rem'>"
-    "<h1>Fall Guard IoT</h1>"
-    "<p>IP: " + WiFi.localIP().toString() + "</p>"
-    "<p>Trạng thái: " + String((millis() < alarmUntil) ? "<b style='color:red'>CANH BAO</b>" : "Binh thuong") + "</p>"
-    "<p>Số lần cảnh báo: " + String(alertCount) + "</p>"
-    "<p>Sự kiện cuối: " + lastEvent + " @ " + lastTime + "</p>"
-    "<p><a href='/alert?event=test'>Thử cảnh báo</a></p>"
-    "</body></html>";
-  server.send(200, "text/html; charset=utf-8", html);
-}
-
-void handleStatus() {
-  String json = "{";
-  json += "\"device\":\"esp32\",";
-  json += "\"ip\":\"" + WiFi.localIP().toString() + "\",";
-  json += "\"alarm_active\":" + String(millis() < alarmUntil ? "true" : "false") + ",";
-  json += "\"alert_count\":" + String(alertCount) + ",";
-  json += "\"last_event\":\"" + lastEvent + "\",";
-  json += "\"last_time\":\"" + lastTime + "\"";
-  json += "}";
-  server.send(200, "application/json", json);
+  outputsAlarm(true);
+  updateLcd();
+  Serial.printf("[ALERT] %s @ %s (#%d)\n", lastEvent.c_str(), lastTime.c_str(), alertCount);
 }
 
 void handleAlert() {
   String event = server.hasArg("event") ? server.arg("event") : "fall";
   String t = server.hasArg("time") ? server.arg("time") : "";
   startAlarm(event, t);
-  server.send(200, "application/json", "{\"ok\":true,\"message\":\"alarm_started\"}");
+  server.send(200, "application/json", "{\"ok\":true}");
 }
 
-void handleNotFound() {
-  server.send(404, "text/plain", "Not found. Dung /alert hoac /status");
-}
-
-void setupWiFi() {
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Ket noi WiFi");
-  int tries = 0;
-  while (WiFi.status() != WL_CONNECTED && tries < 40) {
-    delay(500);
-    Serial.print(".");
-    tries++;
-  }
-  Serial.println();
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.print("ESP32 IP: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.println("Loi WiFi — kiem tra SSID/mat khau.");
-  }
+void handleStatus() {
+  String json = "{";
+  json += "\"ip\":\"" + WiFi.localIP().toString() + "\",";
+  json += "\"alarm_active\":" + String(millis() < alarmUntil ? "true" : "false") + ",";
+  json += "\"alert_count\":" + String(alertCount);
+  json += "}";
+  server.send(200, "application/json", json);
 }
 
 void setup() {
-  Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);
-  if (BUZZER_PIN >= 0) {
-    pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(RGB_RED_PIN, OUTPUT);
+  outputsOff();
+
+  Serial.begin(115200);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("WiFi");
+  for (int i = 0; i < 40 && WiFi.status() != WL_CONNECTED; i++) {
+    delay(500);
+    Serial.print(".");
   }
-  setAlarmActive(false);
+  Serial.println();
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
 
-  setupWiFi();
+  if (ENABLE_LCD) {
+    Wire.begin(LCD_SDA, LCD_SCL);
+    lcd.init();
+    lcd.backlight();
+    updateLcd();
+  }
 
-  server.on("/", HTTP_GET, handleRoot);
-  server.on("/status", HTTP_GET, handleStatus);
   server.on("/alert", HTTP_GET, handleAlert);
-  server.onNotFound(handleNotFound);
+  server.on("/status", HTTP_GET, handleStatus);
   server.begin();
-  Serial.println("HTTP server: http://<IP>/alert");
+  Serial.println("San sang: /alert");
 }
 
 void loop() {
@@ -127,10 +151,16 @@ void loop() {
 
   bool alarming = millis() < alarmUntil;
   if (alarming) {
-    // Nhấp nháy LED khi đang cảnh báo (buzzer giữ HIGH nếu là loại active)
     bool blink = (millis() / 200) % 2;
     digitalWrite(LED_PIN, blink ? HIGH : LOW);
+    rgbRed(true);
+    buzzerOn((millis() / 120) % 2 == 0);
   } else {
-    setAlarmActive(false);
+    outputsOff();
+  }
+
+  if (ENABLE_LCD && millis() - lastLcdUpdate > 2000) {
+    lastLcdUpdate = millis();
+    updateLcd();
   }
 }

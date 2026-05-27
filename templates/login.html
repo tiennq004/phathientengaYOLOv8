@@ -11,7 +11,7 @@
   <script>
     (function () {
       try {
-        if (localStorage.getItem("fallguard-theme") === "dark") document.documentElement.setAttribute("data-theme", "dark");
+        if (localStorage.getItem("fallguard-theme") === "light") document.documentElement.setAttribute("data-theme", "light");
       } catch (_) {}
     })();
   </script>
@@ -88,19 +88,19 @@
     </form>
   </main>
 
-  <footer class="login-footer">© 2025 Khoa CNTT — Đại học Đại Nam · AIoTLab</footer>
+  <footer class="login-footer">© 2026 Nguyễn Quang Tiến AIoTLab</footer>
   <script>
     (function () {
       var btn = document.getElementById("btnThemeLogin");
       if (btn) {
         btn.addEventListener("click", function () {
-          var dark = document.documentElement.getAttribute("data-theme") === "dark";
-          if (dark) {
+          var light = document.documentElement.getAttribute("data-theme") === "light";
+          if (light) {
             document.documentElement.removeAttribute("data-theme");
-            localStorage.setItem("fallguard-theme", "light");
+            localStorage.setItem("fallguard-theme", "purple");
           } else {
-            document.documentElement.setAttribute("data-theme", "dark");
-            localStorage.setItem("fallguard-theme", "dark");
+            document.documentElement.setAttribute("data-theme", "light");
+            localStorage.setItem("fallguard-theme", "light");
           }
         });
       }

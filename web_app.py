@@ -194,6 +194,24 @@ def api_imou_defaults():
     )
 
 
+def _apply_start_config(data: Dict[str, Any], mode: str) -> None:
+    """Áp dụng slider từ client; video file dùng thêm preset nhạy hơn mặc định."""
+    cfg_updates: Dict[str, Any] = dict(data.get("config") or {})
+    if mode == "video":
+        video_defaults = {
+            "fall_aspect_threshold": 0.85,
+            "fall_drop_threshold": 0.0015,
+            "horizontal_only_threshold": 1.0,
+            "pose_angle_threshold": 55.0,
+            "hog_min_score": 0.45,
+            "hog_min_motion": 0.02,
+        }
+        merged = {**video_defaults, **cfg_updates}
+        cfg_updates = merged
+    if cfg_updates:
+        detector.update_config(cfg_updates)
+
+
 @app.post("/api/start")
 @login_required
 def api_start():
@@ -202,6 +220,7 @@ def api_start():
     data = request.get_json(silent=True) or {}
     mode = (data.get("mode") or "camera").strip().lower()
     try:
+        _apply_start_config(data, mode)
         if mode == "camera":
             camera_id = int(data.get("camera", 0))
             detector.start(camera_id, source_label=f"Webcam #{camera_id}")

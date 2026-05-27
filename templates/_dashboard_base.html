@@ -11,7 +11,7 @@
   <script>
     (function () {
       try {
-        if (localStorage.getItem("fallguard-theme") === "dark") document.documentElement.setAttribute("data-theme", "dark");
+        if (localStorage.getItem("fallguard-theme") === "light") document.documentElement.setAttribute("data-theme", "light");
       } catch (_) {}
     })();
   </script>
@@ -37,8 +37,17 @@
       </div>
     </div>
     <div class="header-actions">
+      <nav class="role-nav" aria-label="Vai trò phiên đăng nhập">
+        {% if user.role == 'admin' %}
+        <span class="role-nav-item is-active">Trang quản trị</span>
+        <span class="role-nav-item" aria-disabled="true">Giám sát</span>
+        {% else %}
+        <span class="role-nav-item is-active">Giám sát</span>
+        <span class="role-nav-item" aria-disabled="true">Quản trị</span>
+        {% endif %}
+      </nav>
       {% block header_actions %}{% endblock %}
-      <button type="button" id="btnTheme" class="btn-icon" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">
+      <button type="button" id="btnTheme" class="btn-icon" title="Đổi giao diện tím/sáng" aria-label="Đổi giao diện">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
@@ -53,7 +62,7 @@
         <span class="pill-dot"></span> Chưa chạy
       </span>
       {% block header_tools %}{% endblock %}
-      <button type="button" id="btnLogout" class="btn btn-outline-sm">
+      <button type="button" id="btnLogout" class="btn btn-outline-sm btn-logout-warn">
         <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
         Đăng xuất
       </button>
@@ -64,7 +73,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="site-footer">© 2025 Khoa CNTT — Đại học Đại Nam</footer>
+  <footer class="site-footer">© 2026 Nguyễn Quang Tiến AIoTLab</footer>
 
   <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Xem ảnh sự kiện">
     <button type="button" id="lightboxClose" class="lightbox-close" aria-label="Đóng">×</button>

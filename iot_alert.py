@@ -7,7 +7,15 @@ import threading
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, Optional
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(Path(__file__).resolve().parent / ".env", override=False)
+except Exception:
+    pass
 
 _last_error: str = ""
 

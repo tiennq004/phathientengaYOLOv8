@@ -307,6 +307,23 @@ def detect_fall_pose(
     return True, torso_angle, aspect, pose_bbox, pose_conf
 
 
+def fall_hit_from_pose(
+    torso_angle: float,
+    pose_aspect: float,
+    pose_angle_threshold: float,
+    horizontal_only_threshold: float,
+    fall_aspect_threshold: float = 0.95,
+) -> bool:
+    """Pose: góc thân thấp, hoặc khung người nằm ngang (kể cả khi không đo được góc vai/hông)."""
+    if torso_angle <= pose_angle_threshold:
+        return True
+    if pose_aspect >= horizontal_only_threshold and torso_angle <= 70.0:
+        return True
+    if pose_aspect >= horizontal_only_threshold and pose_aspect >= fall_aspect_threshold:
+        return True
+    return False
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fall detection + Gmail alert (image and video)")
     parser.add_argument("--camera", type=int, default=0)
@@ -514,9 +531,13 @@ def main() -> None:
                     last_box_score = 0.0
             fall_hit = False
             if has_pose:
-                pose_horizontal = torso_angle <= args.pose_angle_threshold
-                pose_wide_and_tilted = (pose_aspect >= args.horizontal_only_threshold) and (torso_angle <= 70.0)
-                fall_hit = pose_horizontal or pose_wide_and_tilted
+                fall_hit = fall_hit_from_pose(
+                    torso_angle,
+                    pose_aspect,
+                    args.pose_angle_threshold,
+                    args.horizontal_only_threshold,
+                    args.fall_aspect_threshold,
+                )
                 if fall_hit:
                     print(f"Fall signal (pose): angle={torso_angle:.1f}, aspect={pose_aspect:.2f}")
             elif boxes:
