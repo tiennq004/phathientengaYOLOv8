@@ -157,39 +157,22 @@ Ngôn ngữ lập trình chính của toàn bộ hệ thống.
 ---
 
 ## 🧩 3. Hình ảnh các chức năng
-
-### Hình 1: Kiến trúc tổng thể hệ thống
-
 <p align="center">
-  <img src="img/so_do_kien_truc_he_thong.png" width="900"/>
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/so_do_kien_truc_he_thong.png" alt="Ảnh 1" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 1: Sơ đồ kiến trúc hệ thống  </em>
 </p>
 
 <p align="center">
-<em>Hệ thống phát hiện té ngã kết hợp AI, Web Dashboard và IoT ESP32</em>
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_admin_1.png" alt="Ảnh 2" width="800"/>
+</p> 
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_admin_2.png" alt="Ảnh 3" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 2: Giao diện Admin  </em>
 </p>
-
-### Hình 2: Kết quả sau huấn luyện mô hình
-
-(Thêm ảnh của bạn)
-
-### Hình 3: Trạng thái chưa té ngã
-
-(Thêm ảnh của bạn)
-
-### Hình 4: Trạng thái khi phát hiện té ngã
-
-(Thêm ảnh của bạn)
-
-### Hình 5: Cảnh báo gửi Email
-
-(Thêm ảnh của bạn)
-
-### Hình 6: Dashboard hệ thống
-
-(Thêm ảnh của bạn)
-
----
-
 ## ⚙️ 4. Các bước cài đặt
 
 ### Bước 1. Clone project
