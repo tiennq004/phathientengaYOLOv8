@@ -73,7 +73,7 @@
 
 **IoT ESP32 Alert**  
 - Máy tính gửi HTTP request tới ESP32 trong mạng LAN.
-- ESP32 kích hoạt LED hoặc buzzer để tạo cảnh báo vật lý.
+- ESP32 kích hoạt LED và buzzer để tạo cảnh báo vật lý.
 
 **Web Dashboard**  
 - Hiển thị giao diện đăng nhập người dùng.
