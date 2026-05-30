@@ -165,13 +165,72 @@ Ngôn ngữ lập trình chính của toàn bộ hệ thống.
 </p>
 
 <p align="center">
-  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_admin_1.png" alt="Ảnh 2" width="800"/>
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_trang_dang_nhap.png" alt="Ảnh 2" width="800"/>
 </p> 
 <p align="center">
-  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_admin_2.png" alt="Ảnh 3" width="800"/>
+  <em>Hình 2: Giao diện trang đăng nhập  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_admin_1.png" alt="Ảnh 3" width="800"/>
 </p> 
 <p align="center">
-  <em>Hình 2: Giao diện Admin  </em>
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_admin_2.png" alt="Ảnh 4" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 3: Giao diện Admin  </em>
+    
+</p>
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_nguoi_dung_1.png" alt="Ảnh 5" width="800"/>
+</p> 
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/giao_dien_nguoi_dung_2.png" alt="Ảnh 6" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 4: Giao người dùng  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/ket_noi_esp32_phat_hien_canh_bao.png" alt="Ảnh 7" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 5: Kết nối Esp32 phát hiện té ngã để nhận cảnh báo  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/so_do_he_thong_IoT_khi_chua_phat_hien_te_nga.jpg" alt="Ảnh 8" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 6: Sơ dồ hệ thống IoT khi chưa phát hiện té ngã  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/so_do_he_thong_IoT_khi_phat_hien_te_nga.jpg" alt="Ảnh 9" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 7: Sơ dồ hệ thống IoT khi chưa phát hiện té ngã  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/phat_hien_nguoi_te_nga.jpg" alt="Ảnh 10" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 8: Hệ thống hiển thị cảnh báo người bị té ngã  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/led_lcd_hien_thi_so_lan_canh_bao.jpg" alt="Ảnh 11" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 9: Led LCD hiển thị số lần cảnh báo  </em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/tiennq004/phathientengaYOLOv8/blob/main/img/gui_canh_bao_ve_email.png" alt="Ảnh 12" width="800"/>
+</p> 
+<p align="center">
+  <em>Hình 10: Cảnh báo gửi về gmail   </em>
 </p>
 ## ⚙️ 4. Các bước cài đặt
 
