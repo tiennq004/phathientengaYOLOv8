@@ -25,9 +25,9 @@
 
 ## 1. Mục tiêu của hệ thống
 
-Hệ thống được xây dựng nhằm phát hiện hành vi té ngã của con người trong khu vực giám sát bằng kỹ thuật thị giác máy tính (Computer Vision), phân tích tư thế cơ thể (Pose Estimation) và mô hình AI để đưa ra cảnh báo theo thời gian thực.
+  Hệ thống được xây dựng nhằm phát hiện hành vi té ngã của con người trong khu vực giám sát bằng kỹ thuật thị giác máy tính (Computer Vision), phân tích tư thế cơ thể (Pose Estimation) và mô hình AI để đưa ra cảnh báo theo thời gian thực.
 
-Hệ thống có khả năng hoạt động với camera trực tiếp hoặc video có sẵn, hỗ trợ nhận diện trạng thái bất thường của con người, từ đó gửi cảnh báo nhanh chóng tới người dùng nhằm giảm thiểu rủi ro khi xảy ra sự cố té ngã.
+  Hệ thống có khả năng hoạt động với camera trực tiếp hoặc video có sẵn, hỗ trợ nhận diện trạng thái bất thường của con người, từ đó gửi cảnh báo nhanh chóng tới người dùng nhằm giảm thiểu rủi ro khi xảy ra sự cố té ngã.
 
 ### 🎯 Các mục tiêu chính
 
